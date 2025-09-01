@@ -1,13 +1,13 @@
 document.body.setAttribute("class", "bg-[#EDEBFE]");
 
 const root = document.createElement("div");
-
 root.setAttribute(
   "class",
   "w-full h-full flex justify-center items-center flex-col"
 );
 root.innerHTML =
   "<h1 class='font-bold pt-4 text-xl '>Student Details Form</h1>";
+
 const form = document.createElement("form");
 form.setAttribute("id", "form");
 form.setAttribute("action", "/submit-data");
@@ -15,124 +15,139 @@ form.setAttribute(
   "class",
   "w-[50%] bg-[#CABFFD] shadow-md border rounded px-8 pt-6 pb-8 mt-4 flex flex-col space-y-5"
 );
-// name field
+
+/* ---------------- NAME ---------------- */
 const nameContainer = document.createElement("div");
+
 const nameLabel = document.createElement("label");
-nameLabel.setAttribute("id", "name");
-nameLabel.setAttribute("for", "name");
 nameLabel.textContent = "Student Name";
+nameLabel.setAttribute("for", "name");
 nameLabel.setAttribute("class", "block text-gray-700 text-lg font-bold mb-2");
 
 const nameInput = document.createElement("input");
-nameInput.setAttribute("type", "text");
-nameInput.setAttribute("id", "name");
-nameInput.setAttribute("name", "name");
+nameInput.type = "text";
+nameInput.id = "name";
+nameInput.name = "name";
 nameInput.setAttribute(
   "class",
   "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 );
-console.log(nameInput.value);
+
+const nameError = document.createElement("p");
+nameError.setAttribute("class", "text-red-500 text-sm mt-1");
 
 nameContainer.appendChild(nameLabel);
-nameLabel.appendChild(nameInput);
+nameContainer.appendChild(nameInput);
+nameContainer.appendChild(nameError);
 
-nameContainer.setAttribute("class", "mb-2");
-// nameInput.setAttribute("required", "");
-
-// Roll number field
+/* ---------------- ROLL ---------------- */
 const rollNumberContainer = document.createElement("div");
+
 const rollNumberLabel = document.createElement("label");
-rollNumberLabel.setAttribute("id", "rollno");
-rollNumberLabel.setAttribute("for", "rollno");
 rollNumberLabel.textContent = "Roll Number";
+rollNumberLabel.setAttribute("for", "rollno");
 rollNumberLabel.setAttribute(
   "class",
   "block text-gray-700 text-lg font-bold mb-2"
 );
 
 const rollInput = document.createElement("input");
-rollInput.setAttribute("type", "number");
-rollInput.setAttribute("id", "rollno");
-rollInput.setAttribute("name", "rollno");
+rollInput.type = "number";
+rollInput.id = "rollno";
+rollInput.name = "rollno";
 rollInput.setAttribute(
   "class",
   "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 );
 
+const rollNumberError = document.createElement("p");
+rollNumberError.setAttribute("class", "text-red-500 text-sm mt-1");
+
 rollNumberContainer.appendChild(rollNumberLabel);
 rollNumberContainer.appendChild(rollInput);
+rollNumberContainer.appendChild(rollNumberError);
 
-// email field
+/* ---------------- EMAIL ---------------- */
 const emailContainer = document.createElement("div");
+
 const emailLabel = document.createElement("label");
-emailLabel.setAttribute("id", "email");
-emailLabel.setAttribute("for", "email");
 emailLabel.textContent = "Email";
+emailLabel.setAttribute("for", "email");
 emailLabel.setAttribute("class", "block text-gray-700 text-lg font-bold mb-2");
 
 const emailInput = document.createElement("input");
-emailInput.setAttribute("type", "email");
-emailInput.setAttribute("id", "email");
-emailInput.setAttribute("name", "email");
+emailInput.type = "email";
+emailInput.id = "email";
+emailInput.name = "email";
 emailInput.setAttribute(
   "class",
   "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 );
 
+const emailError = document.createElement("p");
+emailError.setAttribute("class", "text-red-500 text-sm mt-1");
+
 emailContainer.appendChild(emailLabel);
 emailContainer.appendChild(emailInput);
+emailContainer.appendChild(emailError);
 
-// password field
+/* ---------------- PASSWORD ---------------- */
 const passwordContainer = document.createElement("div");
+
 const passwordLabel = document.createElement("label");
-passwordLabel.setAttribute("id", "password");
-passwordLabel.setAttribute("for", "password");
 passwordLabel.textContent = "Password";
+passwordLabel.setAttribute("for", "password");
 passwordLabel.setAttribute(
   "class",
   "block text-gray-700 text-lg font-bold mb-2"
 );
 
 const passwordInput = document.createElement("input");
-passwordInput.setAttribute("type", "password");
-passwordInput.setAttribute("id", "password");
-passwordInput.setAttribute("name", "password");
+passwordInput.type = "password";
+passwordInput.id = "password";
+passwordInput.name = "password";
 passwordInput.setAttribute(
   "class",
   "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 );
 
+const passwordError = document.createElement("p");
+passwordError.setAttribute("class", "text-red-500 text-sm mt-1");
+
 passwordContainer.appendChild(passwordLabel);
 passwordContainer.appendChild(passwordInput);
+passwordContainer.appendChild(passwordError);
 
-// DOB field
+/* ---------------- DOB ---------------- */
 const dobContainer = document.createElement("div");
+
 const dobLabel = document.createElement("label");
-dobLabel.setAttribute("id", "dob");
+dobLabel.textContent = "Date of Birth";
 dobLabel.setAttribute("for", "dob");
-dobLabel.textContent = "dob";
 dobLabel.setAttribute("class", "block text-gray-700 text-lg font-bold mb-2");
 
 const dobInput = document.createElement("input");
-dobInput.setAttribute("type", "date");
-dobInput.setAttribute("id", "dob");
-dobInput.setAttribute("name", "dob");
+dobInput.type = "date";
+dobInput.id = "dob";
+dobInput.name = "dob";
 dobInput.setAttribute(
   "class",
   "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 );
 
+const dobError = document.createElement("p");
+dobError.setAttribute("class", "text-red-500 text-sm mt-1");
+
 dobContainer.appendChild(dobLabel);
 dobContainer.appendChild(dobInput);
+dobContainer.appendChild(dobError);
 
-// gender field
-// gender field
+/* ---------------- GENDER ---------------- */
 const genderContainer = document.createElement("div");
 genderContainer.setAttribute("class", "flex flex-col space-y-2");
 genderContainer.innerHTML =
   "<b class='block text-gray-700 text-lg font-bold mb-2'>Gender</b>";
 
-// helper function for radio option
 function createRadioOption(id, value, labelText) {
   const wrapper = document.createElement("div");
   wrapper.setAttribute("class", "flex items-center space-x-2");
@@ -155,55 +170,50 @@ function createRadioOption(id, value, labelText) {
   return wrapper;
 }
 
-// create options
 const maleOption = createRadioOption("male", "Male", "Male");
 const femaleOption = createRadioOption("female", "Female", "Female");
 const otherOption = createRadioOption("other", "Other", "Other");
 
-// append to container
+const genderError = document.createElement("p");
+genderError.setAttribute("class", "text-red-500 text-sm mt-1");
+
 genderContainer.appendChild(maleOption);
 genderContainer.appendChild(femaleOption);
 genderContainer.appendChild(otherOption);
+genderContainer.appendChild(genderError);
 
-// select stream field
+/* ---------------- STREAM ---------------- */
 const streamContainer = document.createElement("div");
 
 const streamLabel = document.createElement("label");
-streamLabel.setAttribute("id", "stream");
-streamLabel.setAttribute("for", "stream");
 streamLabel.textContent = "Stream";
+streamLabel.setAttribute("for", "stream");
 streamLabel.setAttribute("class", "block text-gray-700 text-lg font-bold mb-2");
 
 const selectStream = document.createElement("select");
-selectStream.id = "streams";
-selectStream.name = "streams";
+selectStream.id = "stream";
+selectStream.name = "stream";
 selectStream.setAttribute(
   "class",
   "shadow border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
 );
 
-streamContainer.setAttribute("class", "flex flex-col space-y-2");
+const streamError = document.createElement("p");
+streamError.setAttribute("class", "text-red-500 text-sm mt-1");
 
-streamContainer.appendChild(streamLabel);
-
-const streams = [
-  { value: "science", text: "science" },
-  { value: "commerce", text: "commerce" },
-  { value: "arts", text: "arts" },
-];
-
-streams.forEach((stream) => {
+["", "science", "commerce", "arts"].forEach((stream) => {
   const option = document.createElement("option");
-  option.value = stream.value;
-  option.textContent = stream.text;
+  option.value = stream;
+  option.textContent = stream === "" ? "-- Select --" : stream;
   selectStream.appendChild(option);
 });
 
+streamContainer.appendChild(streamLabel);
 streamContainer.appendChild(selectStream);
+streamContainer.appendChild(streamError);
 
-// image field
+/* ---------------- IMAGE ---------------- */
 const imageContainer = document.createElement("div");
-imageContainer.setAttribute("class", "flex flex-col space-y-2");
 
 const imageLabel = document.createElement("label");
 imageLabel.textContent = "Upload Profile Picture";
@@ -220,10 +230,14 @@ imageInput.setAttribute(
   "border rounded px-3 py-2 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
 );
 
+const imageError = document.createElement("p");
+imageError.setAttribute("class", "text-red-500 text-sm mt-1");
+
 imageContainer.appendChild(imageLabel);
 imageContainer.appendChild(imageInput);
+imageContainer.appendChild(imageError);
 
-// submit button field
+/* ---------------- SUBMIT ---------------- */
 const submitButton = document.createElement("button");
 submitButton.textContent = "Submit";
 submitButton.type = "submit";
@@ -235,94 +249,116 @@ submitButton.setAttribute(
 form.appendChild(nameContainer);
 form.appendChild(rollNumberContainer);
 form.appendChild(emailContainer);
-
 form.appendChild(passwordContainer);
 form.appendChild(dobContainer);
-
 form.appendChild(genderContainer);
 form.appendChild(streamContainer);
 form.appendChild(imageContainer);
 form.appendChild(submitButton);
+
 root.append(form);
 document.body.appendChild(root);
 
-// form submitting handler
-
+/* ---------------- VALIDATION ---------------- */
 form.addEventListener("submit", function (e) {
   e.preventDefault();
-
   let isValid = true;
-  let messages = [];
 
+  // reset errors
+  [
+    [nameInput, nameError],
+    [rollInput, rollNumberError],
+    [emailInput, emailError],
+    [passwordInput, passwordError],
+    [dobInput, dobError],
+    [selectStream, streamError],
+    [imageInput, imageError],
+  ].forEach(([input, error]) => {
+    error.textContent = "";
+    input.classList.remove("border-red-500");
+  });
+  genderError.textContent = "";
+
+  // Name
   if (nameInput.value.trim() === "") {
     isValid = false;
-    messages.push("Name is required");
+    nameError.textContent = "Name is required.";
+    nameInput.classList.add("border-red-500");
   }
 
+  // Roll
   if (rollInput.value.trim() === "") {
     isValid = false;
-    messages.push("Roll number is required");
+    rollNumberError.textContent = "Roll number is required.";
+    rollInput.classList.add("border-red-500");
   }
 
-  // Email validation
+  // Email
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (emailInput.value.trim() === "") {
     isValid = false;
-    messages.push("Email is required!");
+    emailError.textContent = "Email is required.";
+    emailInput.classList.add("border-red-500");
   } else if (!emailPattern.test(emailInput.value)) {
     isValid = false;
-    messages.push("Enter a valid email address.");
+    emailError.textContent = "Enter a valid email address.";
+    emailInput.classList.add("border-red-500");
   }
 
-  // Password validation
+  // Password
   if (passwordInput.value.trim() === "") {
     isValid = false;
-    messages.push("Password is required.");
+    passwordError.textContent = "Password is required.";
+    passwordInput.classList.add("border-red-500");
   } else if (passwordInput.value.length < 6) {
     isValid = false;
-    messages.push("Password must be at least 6 characters long.");
+    passwordError.textContent = "Password must be at least 6 characters.";
+    passwordInput.classList.add("border-red-500");
   }
 
-  // DOB validation
+  // DOB
   if (dobInput.value.trim() === "") {
     isValid = false;
-    messages.push("Date of Birth is required.");
+    dobError.textContent = "Date of Birth is required.";
+    dobInput.classList.add("border-red-500");
   }
 
+  // Gender
   const selectedGender = form.querySelector("input[name='gender']:checked");
   if (!selectedGender) {
     isValid = false;
-    messages.push("Gender selection is required.");
+    genderError.textContent = "Gender selection is required.";
   }
 
-  // Stream validation
+  // Stream
   if (selectStream.value.trim() === "") {
     isValid = false;
-    messages.push("Stream selection is required.");
+    streamError.textContent = "Stream selection is required.";
+    selectStream.classList.add("border-red-500");
   }
 
-  // Image validation
+  // Image
   if (imageInput.files.length === 0) {
     isValid = false;
-    messages.push("Profile picture upload is required.");
+    imageError.textContent = "Profile picture is required.";
+    imageInput.classList.add("border-red-500");
   }
 
-  // If validation fails
-  if (!isValid) {
-    alert(messages.join("\n"));
-    return;
-  }
+  if (!isValid) return;
+  let students = JSON.parse(localStorage.getItem("students")) || [];
   const formData = {
     name: nameInput.value,
     rollno: rollInput.value,
     email: emailInput.value,
     password: passwordInput.value,
     dob: dobInput.value,
-    gender: selectedGender ? selectedGender.value : "",
+    gender: selectedGender.value,
     stream: selectStream.value,
     image: imageInput.value,
   };
-  const jsonData = JSON.stringify(formData);
-  localStorage.setItem("studentFormData", jsonData);
-  console.log(jsonData);
+  students.push(formData);
+
+  localStorage.setItem("students", JSON.stringify(students));
+  alert("Form Submitted successfully!");
+  window.location.href = "./students.html";
 });
