@@ -27,7 +27,7 @@ nameInput.id = "name";
 nameInput.name = "name";
 nameInput.setAttribute(
   "class",
-  "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+  "shadow appearance-none border w-full rounded py-2 px-3 text-gray-700"
 );
 const nameError = document.createElement("p");
 nameError.setAttribute("class", "text-red-500 text-sm mt-1");
@@ -48,12 +48,19 @@ rollInput.id = "rollno";
 rollInput.name = "rollno";
 rollInput.setAttribute(
   "class",
-  "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
+  "shadow appearance-none border w-full rounded py-2 px-3 text-gray-700"
 );
 const rollNumberError = document.createElement("p");
 rollNumberError.setAttribute("class", "text-red-500 text-sm mt-1");
 rollNumberContainer.append(rollNumberLabel, rollInput, rollNumberError);
 
+// single div
+nameContainer.classList.add("flex-1");
+rollNumberContainer.classList.add("flex-1");
+const containerFirst = document.createElement("div");
+containerFirst.setAttribute("class", "flex w-full justify-evenly space-x-5");
+containerFirst.append(nameContainer, rollNumberContainer);
+form.appendChild(containerFirst);
 /* ---------------- EMAIL ---------------- */
 const emailContainer = document.createElement("div");
 const emailLabel = document.createElement("label");
@@ -92,6 +99,14 @@ passwordInput.setAttribute(
 const passwordError = document.createElement("p");
 passwordError.setAttribute("class", "text-red-500 text-sm mt-1");
 passwordContainer.append(passwordLabel, passwordInput, passwordError);
+
+// single div
+const containerSecond = document.createElement("div");
+emailContainer.classList.add("flex-1");
+passwordContainer.classList.add("flex-1");
+containerSecond.setAttribute("class", "flex space-x-5");
+containerSecond.append(emailContainer, passwordContainer);
+form.appendChild(containerSecond);
 
 /* ---------------- DOB ---------------- */
 const dobContainer = document.createElement("div");
@@ -246,10 +261,6 @@ submitButton.setAttribute(
 );
 
 form.append(
-  nameContainer,
-  rollNumberContainer,
-  emailContainer,
-  passwordContainer,
   dobContainer,
   genderContainer,
   groupContainer,
