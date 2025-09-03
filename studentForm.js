@@ -1,20 +1,55 @@
-document.body.setAttribute("class", "bg-[#EDEBFE]");
+document.body.setAttribute("class", "bg-gray-600");
 
 const root = document.createElement("div");
 root.setAttribute(
   "class",
   "w-full h-full flex justify-center items-center flex-col"
 );
-root.innerHTML =
-  "<h1 class='font-bold pt-4 text-xl '>Student Details Form</h1>";
+
+const heading = document.createElement("h1");
+heading.setAttribute("class", "font-bold text-white pt-4 text-xl");
+heading.textContent = "Student Details Form";
+root.appendChild(heading);
 
 const form = document.createElement("form");
 form.setAttribute("id", "form");
 form.setAttribute(
   "class",
-  "w-[50%] bg-[#CABFFD] shadow-md border rounded px-8 pt-6 pb-8 mt-4 flex flex-col space-y-5"
+  "w-[75%] bg-gray-400 shadow-md rounded px-8 pt-6 pb-8 mt-4 flex flex-col space-y-5"
 );
+/* ---------------- SIDEBAR ---------------- */
+const sideBarContainer = document.createElement("div");
+sideBarContainer.setAttribute(
+  "class",
+  "w-64 bg-white shadow-lg p-5 flex flex-col"
+);
+const titleSidebar = document.createElement("h1");
+titleSidebar.textContent = "Students Mark list Management";
+titleSidebar.setAttribute("class", "text-2xl font-bold text-gray-800 mb-6");
+// navigation container
+const navigationContainer = document.createElement("nav");
+navigationContainer.setAttribute("class", "flex flex-col space-y-4");
 
+// students table
+const studentsTable = document.createElement("a");
+studentsTable.textContent = "Students detail Table";
+studentsTable.setAttribute(
+  "class",
+  "flex items-center px-3 py-2 rounded-lg hover:bg-gray-200 text-gray-700"
+);
+studentsTable.href = "./students.html";
+
+// students mark table
+const studentsMarkTable = document.createElement("a");
+studentsMarkTable.textContent = "Students Mark Table";
+studentsMarkTable.setAttribute(
+  "class",
+  "flex items-center px-3 py-2 rounded-lg hover:bg-gray-200 text-gray-700"
+);
+studentsMarkTable.href = "./MarksTable.html";
+
+navigationContainer.append(studentsTable, studentsMarkTable);
+sideBarContainer.append(titleSidebar, navigationContainer);
 /* ---------------- NAME ---------------- */
 const nameContainer = document.createElement("div");
 const nameLabel = document.createElement("label");
@@ -226,6 +261,8 @@ allSubjects.forEach((subject) => {
 });
 selectTag.addEventListener("change", function () {
   const selectedGroup = this.value;
+  console.log(subjectCheckboxes);
+  
   Object.keys(subjectCheckboxes).forEach((sub) => {
     subjectCheckboxes[sub].checked =
       selectedGroup && groups[selectedGroup].includes(sub);
@@ -270,6 +307,19 @@ form.append(
 
 root.append(form);
 document.body.appendChild(root);
+
+// Main container for sidebar and form
+const layoutContainer = document.createElement("div");
+layoutContainer.setAttribute("class", "flex w-full ");
+
+layoutContainer.appendChild(sideBarContainer);
+
+const mainContent = document.createElement("div");
+mainContent.setAttribute("class", "flex-1 flex justify-center items-start");
+mainContent.appendChild(root);
+
+layoutContainer.appendChild(mainContent);
+document.body.appendChild(layoutContainer);
 
 /* ---------------- PREFILL DATA ---------------- */
 const editIndex = localStorage.getItem("editIndex");
@@ -352,12 +402,34 @@ form.addEventListener("submit", function (e) {
   }
   if (!isValid) return;
 
-  const selectedGroup = selectTag.value;
   const selectedSubjects = Object.keys(subjectCheckboxes).filter(
     (sub) => subjectCheckboxes[sub].checked
   );
+  const selectedGroup = selectTag.value;
   let students = JSON.parse(localStorage.getItem("students")) || [];
 
+  const rollNumberExists = students.some(
+    (student) => student.rollno === rollInput.value
+  );
+  const emailExists = students.some(
+    (student) => student.email === emailInput.value
+  );
+
+  if (rollNumberExists) {
+    isValid = false;
+    rollNumberError.textContent = "Roll number already exists.";
+  }
+
+  if (emailExists) {
+    isValid = false;
+    emailError.textContent = "Email already exists.";
+  }
+
+  // If there's any error, return early
+  if (!isValid) return;
+
+  console.log("form submmitted");
+  
   function saveData(imageBase64) {
     const formData = {
       name: nameInput.value,

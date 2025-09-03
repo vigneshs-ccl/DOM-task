@@ -1,9 +1,8 @@
-document.body.setAttribute("class", "p-10 bg-[#EDEBFE]");
+document.body.setAttribute("class", "bg-gray-600");
 
 // Container
 const container = document.createElement("div");
 container.setAttribute("class", "max-w-6xl mx-auto");
-document.body.appendChild(container);
 
 // Title & Add Button
 const headerDiv = document.createElement("div");
@@ -11,7 +10,7 @@ headerDiv.setAttribute("class", "flex justify-between items-center mb-5");
 
 const title = document.createElement("h1");
 title.textContent = "Student Details";
-title.setAttribute("class", "text-2xl font-bold");
+title.setAttribute("class", "text-2xl text-white font-bold");
 headerDiv.appendChild(title);
 
 const addBtn = document.createElement("button");
@@ -25,6 +24,70 @@ addBtn.addEventListener("click", () => {
 });
 headerDiv.appendChild(addBtn);
 container.appendChild(headerDiv);
+
+/* ---------------- SIDEBAR ---------------- */
+const sideBarContainer = document.createElement("div");
+sideBarContainer.setAttribute(
+  "class",
+  "w-64 bg-white shadow-lg p-5 flex flex-col"
+);
+const titleSidebar = document.createElement("h1");
+titleSidebar.textContent = "Students Mark list Management";
+titleSidebar.setAttribute("class", "text-2xl font-bold text-gray-800 mb-6");
+// navigation container
+const navigationContainer = document.createElement("nav");
+navigationContainer.setAttribute("class", "flex flex-col space-y-4");
+
+// students table
+const studentsTable = document.createElement("a");
+studentsTable.textContent = "Students detail Table";
+studentsTable.setAttribute(
+  "class",
+  "flex items-center px-3 py-2 rounded-lg hover:bg-gray-200 text-gray-700"
+);
+studentsTable.href = "./students.html";
+
+// students mark table
+const studentsMarkTable = document.createElement("a");
+studentsMarkTable.textContent = "Students Mark Table";
+studentsMarkTable.setAttribute(
+  "class",
+  "flex items-center px-3 py-2 rounded-lg hover:bg-gray-200 text-gray-700"
+);
+studentsMarkTable.href = "./MarksTable.html";
+
+// Active
+
+const currentPath = window.location.pathname;
+console.log(currentPath);
+
+[studentsTable, studentsMarkTable].forEach((link) => {
+  const hrefFile = link.getAttribute("href").replace("./", "");
+  if (currentPath.endsWith(hrefFile)) {
+    link.classList.add("bg-gray-200", "font-bold", "text-blue-600");
+  } else {
+    link.classList.remove("bg-gray-200", "font-bold", "text-blue-600");
+  }
+});
+
+navigationContainer.append(studentsTable, studentsMarkTable);
+sideBarContainer.append(titleSidebar, navigationContainer);
+/* =============================================*/
+// === MAIN LAYOUT ===
+const layoutContainer = document.createElement("div");
+layoutContainer.setAttribute("class", "flex w-full h-screen");
+
+// Sidebar (already built above)
+layoutContainer.appendChild(sideBarContainer);
+
+// Main content wrapper
+const mainContent = document.createElement("div");
+mainContent.setAttribute("class", "flex-1 p-6 overflow-y-auto");
+mainContent.appendChild(container);
+
+// Add both to layout
+layoutContainer.appendChild(mainContent);
+document.body.appendChild(layoutContainer);
 
 /* ---------------- Search Bar ---------------- */
 const searchDiv = document.createElement("div");
@@ -52,15 +115,13 @@ container.appendChild(searchDiv);
 
 // Table
 const table = document.createElement("table");
-table.setAttribute(
-  "class",
-  "min-w-full border border-gray-300 bg-white shadow-md rounded-lg overflow-hidden"
-);
+table.setAttribute("class", "min-w-full shadow-md rounded-lg overflow-hidden");
 
 // Table Head
 const thead = document.createElement("thead");
-thead.setAttribute("class", "bg-gray-200");
+thead.setAttribute("class", "bg-gray-700");
 const headerRow = document.createElement("tr");
+
 let currentSort = { key: null, asc: true };
 
 function sortStudents(key) {
@@ -81,25 +142,32 @@ function sortStudents(key) {
   loadStudents(students);
 }
 
-["Name", "Roll No", "Email", "DOB", "Gender", "Group", "Subjects", "Actions"].forEach(
-  (text) => {
-    const th = document.createElement("th");
-    th.textContent = text;
-    th.setAttribute(
-      "class",
-      "border px-4 py-2 text-left font-medium text-gray-700 cursor-pointer"
-    );
+[
+  "Name",
+  "Roll No",
+  "Email",
+  "DOB",
+  "Gender",
+  "Group",
+  "Subjects",
+  "Actions",
+].forEach((text) => {
+  const th = document.createElement("th");
+  th.textContent = text;
+  th.setAttribute(
+    "class",
+    "px-4 py-2 text-left font-medium text-white cursor-pointer"
+  );
 
-    if (text !== "Actions") {
-      th.addEventListener("click", () => {
-        const key = text.toLowerCase().replace(" ", "");
-        sortStudents(key);
-      });
-    }
-
-    headerRow.appendChild(th);
+  if (text !== "Actions") {
+    th.addEventListener("click", () => {
+      const key = text.toLowerCase().replace(" ", "");
+      sortStudents(key);
+    });
   }
-);
+
+  headerRow.appendChild(th);
+});
 thead.appendChild(headerRow);
 table.appendChild(thead);
 
@@ -110,51 +178,85 @@ table.appendChild(tbody);
 container.appendChild(table);
 
 /* ---------------- Load Students ---------------- */
+
+// display none for search and table
+searchDiv.style.display = "none";
+table.style.display = "none";
 function loadStudents(filteredStudents = null) {
   const students = JSON.parse(localStorage.getItem("students")) || [];
-  const displayList = filteredStudents || students;
-  tbody.innerHTML = "";
+  console.log(students);
+  
+  // Clear previous noData message if exists
+  const existingNoData = container.querySelector(".no-data-message");
+  if (existingNoData) existingNoData.remove();
 
-  displayList.forEach((student, displayIndex) => {
-    const actualIndex = students.findIndex((s) => s.rollno === student.rollno);
+  if (students.length === 0) {
+    // Hide search and table
+    searchDiv.style.display = "none";
+    table.style.display = "none";
 
-    const row = document.createElement("tr");
-    row.className = displayIndex % 2 === 0 ? "bg-gray-50" : "bg-white";
+    // Show no data message
+    const noData = document.createElement("h1");
+    noData.textContent = "- - No students Data available - -";
+    noData.setAttribute(
+      "class",
+      "text-center text-yellow-300 mt-10 text-xl no-data-message"
+    );
+    container.appendChild(noData);
+  } else {
+    // Show search and table
+    searchDiv.style.display = "flex";
+    table.style.display = "table";
 
-    const createTd = (text) => {
-      const td = document.createElement("td");
-      td.textContent = text;
-      td.setAttribute("class", "border px-4 py-2 text-gray-700");
-      return td;
-    };
+    const displayList = filteredStudents || students;
+    tbody.innerHTML = "";
 
-    row.appendChild(createTd(student.name));
-    row.appendChild(createTd(student.rollno));
-    row.appendChild(createTd(student.email));
-    row.appendChild(createTd(student.dob));
-    row.appendChild(createTd(student.gender));
-    row.appendChild(createTd(student.group));
-    row.appendChild(createTd(student.subjects ? student.subjects.join(", ") : ""));
+    displayList.forEach((student) => {
+      const actualIndex = students.findIndex((s) => s.rollno === student.rollno);
 
-    const actionsTd = document.createElement("td");
-    actionsTd.setAttribute("class", "border px-4 py-2");
+      const row = document.createElement("tr");
+      row.className = "bg-gray-400 hover:bg-white";
 
-    const editBtn = document.createElement("button");
-    editBtn.textContent = "Edit";
-    editBtn.className =
-      "bg-yellow-500 text-white px-7 mb-2 py-1 rounded hover:bg-yellow-600";
-    editBtn.addEventListener("click", () => editStudent(actualIndex));
+      const createTd = (text) => {
+        const td = document.createElement("td");
+        td.textContent = text;
+        td.setAttribute(
+          "class",
+          "border px-4 py-2 text-gray-700 text-md font-bold"
+        );
+        return td;
+      };
 
-    const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "Delete";
-    deleteBtn.className =
-      "bg-red-500 text-white px-5 py-1 rounded hover:bg-red-600";
-    deleteBtn.addEventListener("click", () => deleteStudent(actualIndex));
+      row.appendChild(createTd(student.name));
+      row.appendChild(createTd(student.rollno));
+      row.appendChild(createTd(student.email));
+      row.appendChild(createTd(student.dob));
+      row.appendChild(createTd(student.gender));
+      row.appendChild(createTd(student.group));
+      row.appendChild(
+        createTd(student.subjects ? student.subjects.join(", ") : "")
+      );
 
-    actionsTd.append(editBtn, deleteBtn);
-    row.appendChild(actionsTd);
-    tbody.appendChild(row);
-  });
+      const actionsTd = document.createElement("td");
+      actionsTd.setAttribute("class", "border px-4 py-2");
+
+      const editBtn = document.createElement("button");
+      editBtn.textContent = "Edit";
+      editBtn.className =
+        "bg-yellow-500 text-white px-7 mb-2 py-1 rounded hover:bg-yellow-600";
+      editBtn.addEventListener("click", () => editStudent(actualIndex));
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "Delete";
+      deleteBtn.className =
+        "bg-red-500 text-white px-5 py-1 rounded hover:bg-red-600";
+      deleteBtn.addEventListener("click", () => deleteStudent(actualIndex));
+
+      actionsTd.append(editBtn, deleteBtn);
+      row.appendChild(actionsTd);
+      tbody.appendChild(row);
+    });
+  }
 }
 
 /* ---------------- Delete Student ---------------- */
@@ -186,7 +288,9 @@ function searchStudents() {
   }
 
   const filtered = students.filter((student) => {
-    const value = student[filterBy] ? String(student[filterBy]).toLowerCase() : "";
+    const value = student[filterBy]
+      ? String(student[filterBy]).toLowerCase()
+      : "";
     return value.includes(query);
   });
 
