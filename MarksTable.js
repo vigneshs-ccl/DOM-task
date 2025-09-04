@@ -10,9 +10,11 @@ sideBarContainer.setAttribute(
   "class",
   "w-64 bg-white shadow-lg p-5 flex flex-col"
 );
+
 const titleSidebar = document.createElement("h1");
 titleSidebar.textContent = "Students Mark list Management";
 titleSidebar.setAttribute("class", "text-2xl font-bold text-gray-800 mb-6");
+
 // navigation container
 const navigationContainer = document.createElement("nav");
 navigationContainer.setAttribute("class", "flex flex-col space-y-4");
@@ -35,22 +37,22 @@ studentsMarkTable.setAttribute(
 );
 studentsMarkTable.href = "./MarksTable.html";
 
-const currentPath = window.location.pathname; 
-console.log(currentPath);
+// ---------------- Active Logic ----------------
+const currentPath = window.location.pathname;
+console.log("Current path:", currentPath);
 
-[studentsTable, studentsMarkTable].forEach((link) => {
-  const hrefFile = link.getAttribute("href").replace("./", ""); 
-  if (currentPath.endsWith(hrefFile)) {
-    link.classList.add("bg-gray-200", "font-bold", "text-blue-600");
-  } else {
-    link.classList.remove("bg-gray-200", "font-bold", "text-blue-600");
-  }
-});
+// group related pages
+const studentDetailPages = ["students.html", "studentForm.html"];
+const studentMarkPages = ["MarksTable.html", "studentMarks.html"];
 
-navigationContainer.append(
-  studentsTable,
-  studentsMarkTable
-);
+// check active link
+if (studentDetailPages.some(page => currentPath.endsWith(page))) {
+  studentsTable.classList.add("bg-gray-200", "font-bold", "text-blue-600");
+} else if (studentMarkPages.some(page => currentPath.endsWith(page))) {
+  studentsMarkTable.classList.add("bg-gray-200", "font-bold", "text-blue-600");
+}
+
+navigationContainer.append(studentsTable, studentsMarkTable);
 sideBarContainer.append(titleSidebar, navigationContainer);
 /* =============================================*/
 
@@ -100,6 +102,11 @@ if (students.length === 0) {
   noData.textContent = "- - Add new students to add Marks - -";
   noData.setAttribute("class", "text-center text-yellow-300 mt-10 text-xl");
   container.appendChild(noData);
+} else if (!students.some((student) => student.marks)) {
+  const noMarks = document.createElement("h1");
+  noMarks.textContent = "No marks data available.";
+  noMarks.setAttribute("class", "text-center text-red-400 mt-10 text-xl");
+  container.appendChild(noMarks);
 } else {
   // Collect all unique subjects from students
   const allSubjects = new Set();
@@ -120,37 +127,58 @@ if (students.length === 0) {
 
   // Thead
   const thead = document.createElement("thead");
-  let headRow = `
-    <tr class="bg-gray-700 text-white">
-      <th class="py-2 px-4 border">Name</th>
-      <th class="py-2 px-4 border">Roll No</th>
-  `;
+  const headTr = document.createElement("tr");
+  headTr.setAttribute("class", "bg-gray-700 text-white");
+
+  const thName = document.createElement("th");
+  thName.setAttribute("class", "py-2 px-4 border");
+  thName.textContent = "Name";
+  headTr.appendChild(thName);
+
+  const thRoll = document.createElement("th");
+  thRoll.setAttribute("class", "py-2 px-4 border");
+  thRoll.textContent = "Roll No";
+  headTr.appendChild(thRoll);
+
   subjectsArray.forEach((sub) => {
-    headRow += `<th class="py-2 px-4 border">${sub}</th>`;
+    const th = document.createElement("th");
+    th.setAttribute("class", "py-2 px-4 border");
+    th.textContent = sub;
+    headTr.appendChild(th);
   });
-  headRow += "</tr>";
-  thead.innerHTML = headRow;
+
+  thead.appendChild(headTr);
   table.appendChild(thead);
 
   // Tbody
   const tbody = document.createElement("tbody");
   students.forEach((student) => {
-    let row = `
-      <tr class="text-white hover:bg-white hover:text-gray-700">
-        <td class="py-2 px-4 border">${student.name}</td>
-        <td class="py-2 px-4 border">${student.rollno}</td>
-    `;
+    if (student.marks) {
+      const tr = document.createElement("tr");
+      tr.setAttribute("class", "text-white bg-gray-400");
 
-    subjectsArray.forEach((sub) => {
-      const mark =
-        student.marks && student.marks[sub] !== undefined
-          ? student.marks[sub]
-          : "-";
-      row += `<td class="py-2 px-4 border text-center">${mark}</td>`;
-    });
+      const tdName = document.createElement("td");
+      tdName.setAttribute("class", "py-2 px-4 border");
+      tdName.textContent = student.name;
+      tr.appendChild(tdName);
 
-    row += "</tr>";
-    tbody.innerHTML += row;
+      const tdRoll = document.createElement("td");
+      tdRoll.setAttribute("class", "py-2 px-4 border");
+      tdRoll.textContent = student.rollno;
+      tr.appendChild(tdRoll);
+
+      subjectsArray.forEach((sub) => {
+        const td = document.createElement("td");
+        td.setAttribute("class", "py-2 px-4 border text-center");
+        td.textContent =
+          student.marks && student.marks[sub] !== undefined
+            ? student.marks[sub]
+            : "-";
+        tr.appendChild(td);
+      });
+
+      tbody.appendChild(tr);
+    }
   });
 
   table.appendChild(tbody);

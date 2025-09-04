@@ -31,9 +31,11 @@ sideBarContainer.setAttribute(
   "class",
   "w-64 bg-white shadow-lg p-5 flex flex-col"
 );
+
 const titleSidebar = document.createElement("h1");
 titleSidebar.textContent = "Students Mark list Management";
 titleSidebar.setAttribute("class", "text-2xl font-bold text-gray-800 mb-6");
+
 // navigation container
 const navigationContainer = document.createElement("nav");
 navigationContainer.setAttribute("class", "flex flex-col space-y-4");
@@ -56,28 +58,29 @@ studentsMarkTable.setAttribute(
 );
 studentsMarkTable.href = "./MarksTable.html";
 
-// Active
-
+// ---------------- Active Logic ----------------
 const currentPath = window.location.pathname;
-console.log(currentPath);
 
-[studentsTable, studentsMarkTable].forEach((link) => {
-  const hrefFile = link.getAttribute("href").replace("./", "");
-  if (currentPath.endsWith(hrefFile)) {
-    link.classList.add("bg-gray-200", "font-bold", "text-blue-600");
-  } else {
-    link.classList.remove("bg-gray-200", "font-bold", "text-blue-600");
-  }
-});
+// group related pages
+const studentDetailPages = ["students.html", "studentForm.html"];
+const studentMarkPages = ["MarksTable.html", "studentMarks.html"];
+
+// check active link
+if (studentDetailPages.some(page => currentPath.endsWith(page))) {
+  studentsTable.classList.add("bg-gray-200", "font-bold", "text-blue-600");
+} else if (studentMarkPages.some(page => currentPath.endsWith(page))) {
+  studentsMarkTable.classList.add("bg-gray-200", "font-bold", "text-blue-600");
+}
 
 navigationContainer.append(studentsTable, studentsMarkTable);
 sideBarContainer.append(titleSidebar, navigationContainer);
+
 /* =============================================*/
 // === MAIN LAYOUT ===
 const layoutContainer = document.createElement("div");
 layoutContainer.setAttribute("class", "flex w-full h-screen");
 
-// Sidebar (already built above)
+// Sidebar
 layoutContainer.appendChild(sideBarContainer);
 
 // Main content wrapper
@@ -178,21 +181,19 @@ table.appendChild(tbody);
 container.appendChild(table);
 
 /* ---------------- Load Students ---------------- */
-
-// display none for search and table
-searchDiv.style.display = "none";
-table.style.display = "none";
 function loadStudents(filteredStudents = null) {
   const students = JSON.parse(localStorage.getItem("students")) || [];
-  console.log(students);
-  
+  const displayList = filteredStudents || students;
+
   // Clear previous noData message if exists
   const existingNoData = container.querySelector(".no-data-message");
   if (existingNoData) existingNoData.remove();
 
-  if (students.length === 0) {
-    // Hide search and table
-    searchDiv.style.display = "none";
+  // Show search bar always
+  searchDiv.style.display = "flex";
+
+  if (displayList.length === 0) {
+    // Hide table
     table.style.display = "none";
 
     // Show no data message
@@ -204,18 +205,18 @@ function loadStudents(filteredStudents = null) {
     );
     container.appendChild(noData);
   } else {
-    // Show search and table
-    searchDiv.style.display = "flex";
+    // Show table and head
     table.style.display = "table";
-
-    const displayList = filteredStudents || students;
+    thead.style.display = "table-header-group";
     tbody.innerHTML = "";
 
     displayList.forEach((student) => {
-      const actualIndex = students.findIndex((s) => s.rollno === student.rollno);
+      const actualIndex = students.findIndex(
+        (s) => s.rollno === student.rollno
+      );
 
       const row = document.createElement("tr");
-      row.className = "bg-gray-400 hover:bg-white";
+      row.className = "bg-gray-400";
 
       const createTd = (text) => {
         const td = document.createElement("td");
@@ -261,29 +262,74 @@ function loadStudents(filteredStudents = null) {
 
 /* ---------------- Delete Student ---------------- */
 function deleteStudent(index) {
-  let students = JSON.parse(localStorage.getItem("students")) || [];
-  students.splice(index, 1);
-  localStorage.setItem("students", JSON.stringify(students));
-  loadStudents();
+  const overlay = document.createElement("div");
+  overlay.setAttribute(
+    "class",
+    "fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start z-50"
+  );
+
+  const modal = document.createElement("div");
+  modal.setAttribute(
+    "class",
+    "bg-white rounded-xl shadow-lg p-6 w-96 text-center"
+  );
+
+  const title = document.createElement("h2");
+  title.textContent = "Are you sure?";
+  title.setAttribute("class", "text-xl font-bold text-gray-800 mb-4");
+
+  const message = document.createElement("p");
+  message.textContent =
+    "This action will permanently delete the student record.";
+  message.setAttribute("class", "text-gray-600 mb-6");
+
+  const btnDiv = document.createElement("div");
+  btnDiv.setAttribute("class", "flex justify-center gap-4");
+
+  const cancelBtn = document.createElement("button");
+  cancelBtn.textContent = "Cancel";
+  cancelBtn.setAttribute(
+    "class",
+    "bg-gray-400 text-white px-5 py-2 rounded hover:bg-gray-500"
+  );
+  cancelBtn.addEventListener("click", () => {
+    document.body.removeChild(overlay);
+  });
+
+  const confirmBtn = document.createElement("button");
+  confirmBtn.textContent = "Delete";
+  confirmBtn.setAttribute(
+    "class",
+    "bg-red-500 text-white px-5 py-2 rounded hover:bg-red-600"
+  );
+  confirmBtn.addEventListener("click", () => {
+    let students = JSON.parse(localStorage.getItem("students")) || [];
+    students.splice(index, 1);
+    localStorage.setItem("students", JSON.stringify(students));
+    loadStudents();
+    document.body.removeChild(overlay);
+  });
+
+  btnDiv.append(cancelBtn, confirmBtn);
+  modal.append(title, message, btnDiv);
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
 }
 
 /* ---------------- Edit Student ---------------- */
 function editStudent(index) {
-  const students = JSON.parse(localStorage.getItem("students")) || [];
-  const student = students[index];
   localStorage.setItem("editIndex", index);
-  localStorage.setItem("editStudent", JSON.stringify(student));
-  window.location.href = "index.html";
+  window.location.href = "index.html?edit=true";
 }
 
 /* ---------------- Search Function ---------------- */
 function searchStudents() {
   const students = JSON.parse(localStorage.getItem("students")) || [];
   const query = searchInput.value.toLowerCase().trim();
-  let filterBy = searchSelect.value || "name"; // default to name if nothing selected
+  let filterBy = searchSelect.value || "name";
 
   if (!query) {
-    loadStudents(); // show all students when search is empty
+    loadStudents();
     return;
   }
 

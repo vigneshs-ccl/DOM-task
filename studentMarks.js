@@ -21,9 +21,11 @@ sideBarContainer.setAttribute(
   "class",
   "w-64 bg-white shadow-lg p-5 flex flex-col"
 );
+
 const titleSidebar = document.createElement("h1");
 titleSidebar.textContent = "Students Mark list Management";
 titleSidebar.setAttribute("class", "text-2xl font-bold text-gray-800 mb-6");
+
 // navigation container
 const navigationContainer = document.createElement("nav");
 navigationContainer.setAttribute("class", "flex flex-col space-y-4");
@@ -45,6 +47,20 @@ studentsMarkTable.setAttribute(
   "flex items-center px-3 py-2 rounded-lg hover:bg-gray-200 text-gray-700"
 );
 studentsMarkTable.href = "./MarksTable.html";
+
+// ---------------- Active Logic ----------------
+const currentPath = window.location.pathname;
+
+// group related pages
+const studentDetailPages = ["students.html", "studentForm.html"];
+const studentMarkPages = ["MarksTable.html", "studentMarksform.html"];
+
+// check active link
+if (studentDetailPages.some(page => currentPath.endsWith(page))) {
+  studentsTable.classList.add("bg-gray-200", "font-bold", "text-blue-600");
+} else if (studentMarkPages.some(page => currentPath.endsWith(page))) {
+  studentsMarkTable.classList.add("bg-gray-200", "font-bold", "text-blue-600");
+}
 
 navigationContainer.append(studentsTable, studentsMarkTable);
 sideBarContainer.append(titleSidebar, navigationContainer);
@@ -69,7 +85,7 @@ selectStudent.setAttribute(
 
 const defaultOption = document.createElement("option");
 defaultOption.value = "";
-defaultOption.textContent = "-- Select a group --";
+defaultOption.textContent = "-- Select a student --";
 selectStudent.appendChild(defaultOption);
 
 students.forEach((student, index) => {
@@ -168,14 +184,53 @@ form.addEventListener("submit", (e) => {
   // Update localStorage
   localStorage.setItem("students", JSON.stringify(students));
 
-  alert(`Marks saved for ${student.name}!`);
-  console.log(students);
+  // Create overlay
+  const overlay = document.createElement("div");
+  overlay.setAttribute(
+    "class",
+    "fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start z-50"
+  );
 
-  // Reset form
-  form.reset();
+  // Create modal
+  const modal = document.createElement("div");
+  modal.setAttribute(
+    "class",
+    "bg-white rounded-xl shadow-lg p-6 w-96 text-center"
+  );
 
-  subjectsContainer.innerHTML = "";
-  window.location.href = "./MarksTable.html";
+  // Title
+  const title = document.createElement("h2");
+  title.textContent = "Student Mark Added Successfully!";
+  title.setAttribute("class", "text-xl font-bold text-gray-800 mb-4");
+
+  // Message
+  const message = document.createElement("p");
+  message.textContent = `Marks saved for ${student.name}!`;
+  message.setAttribute("class", "text-gray-600 mb-6");
+
+  // Buttons container
+  const btnDiv = document.createElement("div");
+  btnDiv.setAttribute("class", "flex justify-center gap-4");
+
+  // Confirm button
+  const confirmBtn = document.createElement("button");
+  confirmBtn.textContent = "Okay!";
+  confirmBtn.setAttribute(
+    "class",
+    "bg-red-500 text-white px-5 py-2 rounded hover:bg-red-600"
+  );
+  confirmBtn.addEventListener("click", () => {
+    // Reset form
+    form.reset();
+
+    subjectsContainer.innerHTML = "";
+    window.location.href = "./MarksTable.html";
+  });
+
+  btnDiv.append(confirmBtn);
+  modal.append(title, message, btnDiv);
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
 });
 
 // document.body.appendChild(container);
