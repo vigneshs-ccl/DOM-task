@@ -2,7 +2,7 @@ document.body.setAttribute("class", "bg-gray-600");
 
 // Container
 const container = document.createElement("div");
-container.setAttribute("class", "max-w-6xl mx-auto");
+container.setAttribute("class", "max-w-7xl mx-auto");
 
 // Title & Add Button
 const headerDiv = document.createElement("div");
@@ -66,9 +66,9 @@ const studentDetailPages = ["students.html", "studentForm.html"];
 const studentMarkPages = ["MarksTable.html", "studentMarks.html"];
 
 // check active link
-if (studentDetailPages.some(page => currentPath.endsWith(page))) {
+if (studentDetailPages.some((page) => currentPath.endsWith(page))) {
   studentsTable.classList.add("bg-gray-200", "font-bold", "text-blue-600");
-} else if (studentMarkPages.some(page => currentPath.endsWith(page))) {
+} else if (studentMarkPages.some((page) => currentPath.endsWith(page))) {
   studentsMarkTable.classList.add("bg-gray-200", "font-bold", "text-blue-600");
 }
 
@@ -116,6 +116,26 @@ searchSelect.setAttribute("class", "border px-2 py-2 rounded");
 searchDiv.append(searchInput, searchSelect);
 container.appendChild(searchDiv);
 
+// PDF and EXCEL file export section
+
+const exportDiv = document.createElement("div");
+exportDiv.setAttribute("class", "flex gap-4 mb-5");
+
+const exportPdfBtn = document.createElement("button");
+exportPdfBtn.textContent = "Export as Pdf";
+exportPdfBtn.className =
+  "bg-red-600 font-bold text-white px-4 py-2 rounded hover:bg-red-700";
+
+const exportExcelBtn = document.createElement("button");
+exportExcelBtn.textContent = "Export as Excel";
+exportExcelBtn.className =
+  "bg-green-600 font-bold text-white px-4 py-2 rounded hover:bg-green-700";
+
+exportDiv.append(exportPdfBtn, exportExcelBtn);
+
+container.appendChild(exportDiv);
+
+/*---------------------------------------------*/
 // Table
 const table = document.createElement("table");
 table.setAttribute("class", "min-w-full shadow-md rounded-lg overflow-hidden");
@@ -191,11 +211,11 @@ function loadStudents(filteredStudents = null) {
 
   // Show search bar always
   searchDiv.style.display = "flex";
-
+  exportDiv.style.display = "flex";
   if (displayList.length === 0) {
     // Hide table
     table.style.display = "none";
-
+    exportDiv.style.display = "none";
     // Show no data message
     const noData = document.createElement("h1");
     noData.textContent = "- - No students Data available - -";
@@ -203,6 +223,7 @@ function loadStudents(filteredStudents = null) {
       "class",
       "text-center text-yellow-300 mt-10 text-xl no-data-message"
     );
+
     container.appendChild(noData);
   } else {
     // Show table and head
@@ -239,21 +260,41 @@ function loadStudents(filteredStudents = null) {
       );
 
       const actionsTd = document.createElement("td");
-      actionsTd.setAttribute("class", "border px-4 py-2");
+      actionsTd.setAttribute("class", "border px-2 py-4 space-y-3");
 
       const editBtn = document.createElement("button");
       editBtn.textContent = "Edit";
       editBtn.className =
-        "bg-yellow-500 text-white px-7 mb-2 py-1 rounded hover:bg-yellow-600";
+        "bg-yellow-500 text-white px-4 py-1 rounded hover:bg-yellow-600";
       editBtn.addEventListener("click", () => editStudent(actualIndex));
 
       const deleteBtn = document.createElement("button");
       deleteBtn.textContent = "Delete";
       deleteBtn.className =
-        "bg-red-500 text-white px-5 py-1 rounded hover:bg-red-600";
+        "bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600";
       deleteBtn.addEventListener("click", () => deleteStudent(actualIndex));
 
-      actionsTd.append(editBtn, deleteBtn);
+      const pdfBtn = document.createElement("button");
+      pdfBtn.textContent = "Pdf";
+      pdfBtn.className =
+        "bg-blue-500 text-white px-5 py-1 rounded hover:bg-blue-700";
+      pdfBtn.addEventListener("click", function () {
+        exportStudentPDF(student);
+      });
+
+      const excelBtn = document.createElement("button");
+      excelBtn.textContent = "Excel";
+      excelBtn.className =
+        "bg-green-500 text-white px-4 py-1 rounded hover:bg-green-700";
+      excelBtn.addEventListener("click", function () {
+        exportStudentExcel(student);
+      });
+
+      const btnGroup = document.createElement("div");
+      btnGroup.setAttribute("class", "flex justify-center gap-2 flex-wrap");
+
+      btnGroup.append(editBtn, deleteBtn, pdfBtn, excelBtn);
+      actionsTd.appendChild(btnGroup);
       row.appendChild(actionsTd);
       tbody.appendChild(row);
     });
@@ -348,3 +389,143 @@ searchSelect.addEventListener("change", searchStudents);
 
 // Load students on page load
 window.onload = () => loadStudents();
+
+/* ---------------- Safe Download ---------------- */
+function triggerDownload(blob, fileName) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/* ---------------- Export Single Student ---------------- */
+function exportStudentPDF(student) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // Professional header
+  doc.setFillColor(41, 128, 185); // Blue
+  doc.setTextColor(255, 255, 255);
+  doc.rect(0, 0, 210, 20, "F");
+  doc.setFontSize(16);
+  doc.text("Student Detail", 105, 13, { align: "center" });
+
+  // Reset text color
+  doc.setTextColor(0, 0, 0);
+  doc.setFontSize(12);
+
+  let y = 30;
+  const fields = {
+    Name: student.name,
+    "Roll No": student.rollno,
+    Email: student.email,
+    Gender: student.gender,
+    Group: student.group,
+    Subjects: (student.subjects || []).join(", "),
+  };
+
+  for (const [key, value] of Object.entries(fields)) {
+    doc.text(`${key}: ${value}`, 20, y);
+    y += 10;
+  }
+
+  const pdfBlob = doc.output("blob");
+  triggerDownload(pdfBlob, `${student.rollno}_details.pdf`);
+}
+
+function exportStudentExcel(student) {
+  const flatStudent = {
+    Name: student.name,
+    "Roll No": student.rollno,
+    Email: student.email,
+    Gender: student.gender,
+    Group: student.group,
+    Subjects: (student.subjects || []).join(", "),
+  };
+
+  const ws = XLSX.utils.json_to_sheet([flatStudent]);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Student");
+
+  const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+  const excelBlob = new Blob([wbout], { type: "application/octet-stream" });
+  triggerDownload(excelBlob, `${student.rollno}_details.xlsx`);
+}
+
+/* ---------------- Export Whole Table ---------------- */
+function exportAllPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // Professional header
+  doc.setFillColor(41, 128, 185); // Blue
+  doc.setTextColor(255, 255, 255);
+  doc.rect(0, 0, 210, 20, "F");
+  doc.setFontSize(16);
+  doc.text("All Students detail", 105, 13, { align: "center" });
+
+  // Reset text color
+  doc.setTextColor(0, 0, 0);
+  doc.setFontSize(12);
+
+  const students = JSON.parse(localStorage.getItem("students")) || [];
+  let y = 30;
+
+  students.forEach((student, idx) => {
+    const fields = {
+      Name: student.name,
+      "Roll No": student.rollno,
+      Email: student.email,
+      Gender: student.gender,
+      Group: student.group,
+      Subjects: (student.subjects || []).join(", "),
+    };
+
+    doc.text(`${idx + 1}. Student Record`, 20, y);
+    y += 8;
+
+    for (const [key, value] of Object.entries(fields)) {
+      doc.text(`${key}: ${value}`, 30, y);
+      y += 8;
+    }
+
+    y += 5;
+
+    if (y > 270) {
+      doc.addPage();
+      y = 20;
+    }
+  });
+
+  const pdfBlob = doc.output("blob");
+  triggerDownload(pdfBlob, "All_Students.pdf");
+}
+
+function exportAllExcel() {
+  let students = JSON.parse(localStorage.getItem("students")) || [];
+
+  const flatStudents = students.map((s) => ({
+    Name: s.name,
+    "Roll No": s.rollno,
+    Email: s.email,
+    Gender: s.gender,
+    Group: s.group,
+    Subjects: (s.subjects || []).join(", "),
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(flatStudents);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Students");
+
+  const wbout = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+  const excelBlob = new Blob([wbout], { type: "application/octet-stream" });
+  triggerDownload(excelBlob, "All_Students.xlsx");
+}
+
+/* ---------------- Attach Events ---------------- */
+exportPdfBtn.addEventListener("click", exportAllPDF);
+exportExcelBtn.addEventListener("click", exportAllExcel);

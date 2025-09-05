@@ -4,7 +4,7 @@ if (!isEditing) {
   localStorage.removeItem("editIndex");
 }
 
-document.body.setAttribute("class", "bg-gradient-to-t from-slate-900 to-slate-400");
+document.body.setAttribute("class", "bg-gray-600");
 
 const root = document.createElement("div");
 root.setAttribute(
@@ -21,7 +21,7 @@ const form = document.createElement("form");
 form.setAttribute("id", "form");
 form.setAttribute(
   "class",
-  "w-[75%] bg-gradient-to-r from-violet-200 to-blue-400 shadow-md rounded px-8 pt-6 pb-8 mt-4 flex flex-col space-y-5"
+  "w-[75%] bg-gray-400 shadow-md rounded px-8 pt-6 pb-8 mt-4 flex flex-col space-y-5"
 );
 /* ---------------- SIDEBAR ---------------- */
 const sideBarContainer = document.createElement("div");

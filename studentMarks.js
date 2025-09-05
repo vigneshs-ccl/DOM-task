@@ -56,15 +56,15 @@ const studentDetailPages = ["students.html", "studentForm.html"];
 const studentMarkPages = ["MarksTable.html", "studentMarksform.html"];
 
 // check active link
-if (studentDetailPages.some(page => currentPath.endsWith(page))) {
+if (studentDetailPages.some((page) => currentPath.endsWith(page))) {
   studentsTable.classList.add("bg-gray-200", "font-bold", "text-blue-600");
-} else if (studentMarkPages.some(page => currentPath.endsWith(page))) {
+} else if (studentMarkPages.some((page) => currentPath.endsWith(page))) {
   studentsMarkTable.classList.add("bg-gray-200", "font-bold", "text-blue-600");
 }
 
 navigationContainer.append(studentsTable, studentsMarkTable);
 sideBarContainer.append(titleSidebar, navigationContainer);
-/* ===========================================*/
+/* =============================================*/
 
 const firstContainer = document.createElement("div");
 
@@ -94,9 +94,9 @@ students.forEach((student, index) => {
   option.textContent = student.name;
   selectStudent.appendChild(option);
 });
-
-firstContainer.appendChild(selectStudentLabel);
-firstContainer.appendChild(selectStudent);
+const selectError = document.createElement("p");
+selectError.setAttribute("class", "text-red-500 text-sm mt-1");
+firstContainer.append(selectStudentLabel, selectStudent, selectError);
 form.appendChild(firstContainer);
 
 const subjectsContainer = document.createElement("div");
@@ -159,9 +159,9 @@ selectStudent.addEventListener("change", () => {
     input.max = 100;
     input.setAttribute("class", "border rounded py-1 px-2");
     input.name = subject;
-
-    subjectDiv.appendChild(label);
-    subjectDiv.appendChild(input);
+    const inputError = document.createElement("p");
+    inputError.setAttribute("class", "text-red-500 text-sm mt-1");
+    subjectDiv.append(label, input, inputError);
     subjectsContainer.appendChild(subjectDiv);
   });
 });
@@ -169,19 +169,35 @@ selectStudent.addEventListener("change", () => {
 form.addEventListener("submit", (e) => {
   e.preventDefault();
 
+  let isValid = true; // validation flag
+  selectError.textContent = "";
+
   const selectedIndex = selectStudent.value;
-  if (selectedIndex === "") return alert("Please select a student!");
+  if (selectedIndex === "") {
+    selectError.textContent = "Please select the student to proceed!.";
+    return; // stop here if no student selected
+  }
 
   const student = students[selectedIndex];
-
-  // Collect marks
   const inputs = subjectsContainer.querySelectorAll("input");
+
   student.marks = {}; // store marks for student
+
   inputs.forEach((input) => {
-    student.marks[input.name] = Number(input.value);
+    const errorEl = input.nextElementSibling; // <p> under input
+    if (!input.value.trim()) {
+      errorEl.textContent = `${input.name} mark is required!`;
+      isValid = false;
+    } else {
+      errorEl.textContent = ""; // clear old error
+      student.marks[input.name] = Number(input.value);
+    }
   });
 
-  // Update localStorage
+  // stop if invalid
+  if (!isValid) return;
+
+  //  If valid, save marks
   localStorage.setItem("students", JSON.stringify(students));
 
   // Create overlay
@@ -191,28 +207,23 @@ form.addEventListener("submit", (e) => {
     "fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start z-50"
   );
 
-  // Create modal
   const modal = document.createElement("div");
   modal.setAttribute(
     "class",
     "bg-white rounded-xl shadow-lg p-6 w-96 text-center"
   );
 
-  // Title
   const title = document.createElement("h2");
   title.textContent = "Student Mark Added Successfully!";
   title.setAttribute("class", "text-xl font-bold text-gray-800 mb-4");
 
-  // Message
   const message = document.createElement("p");
   message.textContent = `Marks saved for ${student.name}!`;
   message.setAttribute("class", "text-gray-600 mb-6");
 
-  // Buttons container
   const btnDiv = document.createElement("div");
   btnDiv.setAttribute("class", "flex justify-center gap-4");
 
-  // Confirm button
   const confirmBtn = document.createElement("button");
   confirmBtn.textContent = "Okay!";
   confirmBtn.setAttribute(
@@ -220,9 +231,7 @@ form.addEventListener("submit", (e) => {
     "bg-red-500 text-white px-5 py-2 rounded hover:bg-red-600"
   );
   confirmBtn.addEventListener("click", () => {
-    // Reset form
     form.reset();
-
     subjectsContainer.innerHTML = "";
     window.location.href = "./MarksTable.html";
   });
