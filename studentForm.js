@@ -4,92 +4,95 @@ if (!isEditing) {
   localStorage.removeItem("editIndex");
 }
 
-document.body.setAttribute("class", "bg-gradient-to-t from-slate-900 to-slate-400");
+document.body.setAttribute("class", "bg-gradient-to-tr from-gray-100 to-gray-300 min-h-screen");
 
 const root = document.createElement("div");
-root.setAttribute(
-  "class",
-  "w-full h-full flex justify-center items-center flex-col"
-);
+root.setAttribute("class", "w-full h-full flex justify-center items-center flex-col");
 
+
+/* ---------------- HEADING ---------------- */
 const heading = document.createElement("h1");
-heading.setAttribute("class", "font-bold text-white pt-4 text-xl");
+heading.setAttribute("class", "font-bold text-gray-800 pt-6 text-2xl tracking-wide");
 heading.textContent = "Student Details Form";
 root.appendChild(heading);
 
+/* ---------------- FORM ---------------- */
 const form = document.createElement("form");
 form.setAttribute("id", "form");
 form.setAttribute(
   "class",
-  "w-[75%] bg-gradient-to-r from-violet-200 to-blue-400 shadow-md rounded px-8 pt-6 pb-8 mt-4 flex flex-col space-y-5"
+  "w-[75%] bg-white/90 backdrop-blur-md shadow-lg rounded-xl px-10 pt-8 pb-10 mt-6 flex flex-col space-y-6"
 );
 /* ---------------- SIDEBAR ---------------- */
 const sideBarContainer = document.createElement("div");
 sideBarContainer.setAttribute(
   "class",
-  "w-64 bg-white shadow-lg p-5 flex flex-col"
+  "w-64 bg-white shadow-xl rounded-r-xl p-6 flex flex-col"
 );
 
 const titleSidebar = document.createElement("h1");
 titleSidebar.textContent = "Students Mark list Management";
-titleSidebar.setAttribute("class", "text-2xl font-bold text-gray-800 mb-6");
+titleSidebar.setAttribute("class", "text-xl font-semibold text-gray-900 mb-8 tracking-wide");
 
-// navigation container
+/* NAVIGATION */
 const navigationContainer = document.createElement("nav");
-navigationContainer.setAttribute("class", "flex flex-col space-y-4");
+navigationContainer.setAttribute("class", "flex flex-col space-y-3");
 
-// students table
 const studentsTable = document.createElement("a");
 studentsTable.textContent = "Students detail Table";
 studentsTable.setAttribute(
   "class",
-  "flex items-center px-3 py-2 rounded-lg hover:bg-gray-200 text-gray-700"
+  "flex items-center px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition"
 );
 studentsTable.href = "./students.html";
 
-// students mark table
 const studentsMarkTable = document.createElement("a");
 studentsMarkTable.textContent = "Students Mark Table";
 studentsMarkTable.setAttribute(
   "class",
-  "flex items-center px-3 py-2 rounded-lg hover:bg-gray-200 text-gray-700"
+  "flex items-center px-4 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition"
 );
 studentsMarkTable.href = "./MarksTable.html";
 
-// ---------------- Active Logic ----------------
+/* Active state logic */
 const currentPath = window.location.pathname;
-console.log("Current path:", currentPath);
-
-// group related pages
 const studentDetailPages = ["index.html", "students.html"];
 const studentMarkPages = ["MarksTable.html", "studentMarks.html"];
 
-// check active link
 if (studentDetailPages.some((page) => currentPath.endsWith(page))) {
-  studentsTable.classList.add("bg-gray-200", "font-bold", "text-blue-600");
+  studentsTable.classList.add("bg-gray-100", "font-semibold", "text-blue-600");
 } else if (studentMarkPages.some((page) => currentPath.endsWith(page))) {
-  studentsMarkTable.classList.add("bg-gray-200", "font-bold", "text-blue-600");
+  studentsMarkTable.classList.add("bg-gray-100", "font-semibold", "text-blue-600");
 }
 
 navigationContainer.append(studentsTable, studentsMarkTable);
 sideBarContainer.append(titleSidebar, navigationContainer);
 
-/*---------------------------------------*/
 
+/*---------------------------------------*/
 /* ---------------- IMAGE ---------------- */
 const imageContainer = document.createElement("div");
-imageContainer.setAttribute("class", "flex flex-col items-center");
+imageContainer.setAttribute("class", "flex flex-col items-center space-y-3 relative");
 
 // Label
 const imageLabel = document.createElement("label");
 imageLabel.innerHTML = `Upload Student Picture<span class="text-red-500">*</span>`;
 imageLabel.setAttribute("for", "image");
-imageLabel.setAttribute(
-  "class",
-  "block text-gray-700 text-lg font-bold mb-2 text-center"
-);
+imageLabel.setAttribute("class", "block text-gray-700 text-lg font-semibold mb-2 text-center");
 
-// File Input (hidden)
+// Wrapper for image + overlay
+const imageWrapper = document.createElement("div");
+imageWrapper.setAttribute("class", "relative w-50 h-50");
+
+// Default Profile
+const defaultImg = document.createElement("img");
+defaultImg.src =
+  "https://w7.pngwing.com/pngs/205/731/png-transparent-default-avatar-thumbnail.png";
+defaultImg.className =
+  "w-40 h-40 rounded-full shadow-md border-2 border-gray-300 object-cover cursor-pointer";
+defaultImg.id = "profilePreview";
+
+// File input (hidden)
 const imageInput = document.createElement("input");
 imageInput.type = "file";
 imageInput.accept = "image/*";
@@ -97,48 +100,67 @@ imageInput.id = "image";
 imageInput.name = "image";
 imageInput.className = "hidden";
 
-// Default Profile Photo
-const defaultImg = document.createElement("img");
-defaultImg.src =
-  "https://w7.pngwing.com/pngs/205/731/png-transparent-default-avatar-thumbnail.png";
-defaultImg.className = "w-40 h-40 m-auto rounded-full shadow mt-2";
-defaultImg.id = "profilePreview";
+// Overlay (initially with Add icon only)
+const overlay = document.createElement("div");
+overlay.setAttribute(
+  "class",
+  "absolute inset-0 bg-black/40 rounded-full flex items-center justify-center gap-4 opacity-0 hover:opacity-100 transition"
+);
 
-// Error Message
+const addIcon = document.createElement("button");
+addIcon.type = "button";
+addIcon.innerHTML = `<i class="fa-solid fa-plus text-white text-lg"></i>`;
+addIcon.setAttribute("class", "cursor-pointer");
+
+const editIcon = document.createElement("button");
+editIcon.type = "button";
+editIcon.innerHTML = `<i class="fa-solid fa-pen text-white text-lg"></i>`;
+editIcon.setAttribute("class", "cursor-pointer hidden"); // hidden initially
+
+const deleteIcon = document.createElement("button");
+deleteIcon.type = "button";
+deleteIcon.innerHTML = `<i class="fa-solid fa-trash text-white text-lg"></i>`;
+deleteIcon.setAttribute("class", "cursor-pointer hidden"); // hidden initially
+
+overlay.append(addIcon, editIcon, deleteIcon);
+imageWrapper.append(defaultImg, overlay);
+
+// Error message
 const imageError = document.createElement("p");
 imageError.setAttribute("class", "text-red-500 text-sm mt-1");
 
-// Button → triggers file input
-const selectBtn = document.createElement("button");
-selectBtn.type = "button";
-selectBtn.textContent = "Select New Photo";
-selectBtn.className =
-  "inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-400 focus:shadow-outline-blue active:text-gray-800 active:bg-gray-50 transition ease-in-out duration-150 mt-2";
+// Logic: clicking Add/Edit → trigger upload
+defaultImg.addEventListener("click", () => imageInput.click());
+addIcon.addEventListener("click", () => imageInput.click());
+editIcon.addEventListener("click", () => imageInput.click());
 
-// Button click → open file dialog
-selectBtn.addEventListener("click", () => {
-  imageInput.click();
-});
-
-// File change → show preview
+// Handle upload
 imageInput.addEventListener("change", () => {
   if (imageInput.files && imageInput.files[0]) {
     const reader = new FileReader();
     reader.onload = (e) => {
-      defaultImg.src = e.target.result; // update preview
+      defaultImg.src = e.target.result;
+      // Switch icons → show edit & delete, hide add
+      addIcon.classList.add("hidden");
+      editIcon.classList.remove("hidden");
+      deleteIcon.classList.remove("hidden");
     };
     reader.readAsDataURL(imageInput.files[0]);
   }
 });
 
-// Append everything
-imageContainer.append(
-  imageLabel,
-  defaultImg,
-  selectBtn,
-  imageInput,
-  imageError
-);
+// Handle delete → reset back to default
+deleteIcon.addEventListener("click", () => {
+  defaultImg.src =
+    "https://w7.pngwing.com/pngs/205/731/png-transparent-default-avatar-thumbnail.png";
+  imageInput.value = ""; // clear file input
+  // Switch icons → show add, hide edit & delete
+  addIcon.classList.remove("hidden");
+  editIcon.classList.add("hidden");
+  deleteIcon.classList.add("hidden");
+});
+
+imageContainer.append(imageLabel, imageWrapper, imageInput, imageError);
 
 /* ---------------- NAME ---------------- */
 const nameContainer = document.createElement("div");
@@ -421,8 +443,10 @@ selectGroupError.setAttribute("class", "text-red-500 text-sm mt-1");
 groupContainer.appendChild(selectGroupError);
 
 const subjectContainer = document.createElement("div");
-
-subjectContainer.setAttribute("class", "m-4");
+subjectContainer.setAttribute(
+  "class",
+  "grid grid-cols-2 md:grid-cols-3 gap-3 bg-gray-50 p-4 rounded-lg border mt-3"
+);
 groupContainer.appendChild(subjectContainer);
 const subjectCheckboxes = {};
 allSubjects.forEach((subject) => {
@@ -454,7 +478,7 @@ submitButton.textContent = "Submit";
 submitButton.type = "submit";
 submitButton.setAttribute(
   "class",
-  "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+  "bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md text-base shadow-md transition"
 );
 
 form.append(

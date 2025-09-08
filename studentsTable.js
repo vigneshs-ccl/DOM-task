@@ -1,23 +1,26 @@
-document.body.setAttribute("class", "bg-gray-600");
+document.body.setAttribute("class", "bg-gray-100 font-sans");
 
-// Container
+/* ---------------- Container ---------------- */
 const container = document.createElement("div");
 container.setAttribute("class", "max-w-7xl mx-auto");
 
-// Title & Add Button
+/* ---------------- Title & Add Button ---------------- */
 const headerDiv = document.createElement("div");
-headerDiv.setAttribute("class", "flex justify-between items-center mb-5");
+headerDiv.setAttribute("class", "flex justify-between items-center mb-6");
 
 const title = document.createElement("h1");
 title.textContent = "Student Details";
-title.setAttribute("class", "text-2xl text-white font-bold");
+title.setAttribute(
+  "class",
+  "text-3xl text-gray-900 font-extrabold tracking-wide"
+);
 headerDiv.appendChild(title);
 
 const addBtn = document.createElement("button");
-addBtn.textContent = "Add Student";
+addBtn.innerHTML = `<i class="fa-solid fa-plus mr-2"></i> Add Student`;
 addBtn.setAttribute(
   "class",
-  "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+  "bg-[#152340] text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition flex items-center"
 );
 addBtn.addEventListener("click", () => {
   window.location.href = "index.html";
@@ -29,23 +32,26 @@ container.appendChild(headerDiv);
 const sideBarContainer = document.createElement("div");
 sideBarContainer.setAttribute(
   "class",
-  "w-64 bg-white shadow-lg p-5 flex flex-col"
+  "w-64 bg-gray-900 text-white shadow-lg p-6 flex flex-col"
 );
 
 const titleSidebar = document.createElement("h1");
-titleSidebar.textContent = "Students Mark list Management";
-titleSidebar.setAttribute("class", "text-2xl font-bold text-gray-800 mb-6");
+titleSidebar.textContent = "Students Mark List Management";
+titleSidebar.setAttribute(
+  "class",
+  "text-lg font-semibold mb-6 tracking-wide border-b border-gray-700 pb-3"
+);
 
 // navigation container
 const navigationContainer = document.createElement("nav");
-navigationContainer.setAttribute("class", "flex flex-col space-y-4");
+navigationContainer.setAttribute("class", "flex flex-col space-y-3");
 
 // students table
 const studentsTable = document.createElement("a");
-studentsTable.textContent = "Students detail Table";
+studentsTable.textContent = "Students Detail Table";
 studentsTable.setAttribute(
   "class",
-  "flex items-center px-3 py-2 rounded-lg hover:bg-gray-200 text-gray-700"
+  "px-3 py-2 rounded-lg hover:bg-gray-800 transition text-gray-300"
 );
 studentsTable.href = "./students.html";
 
@@ -54,29 +60,35 @@ const studentsMarkTable = document.createElement("a");
 studentsMarkTable.textContent = "Students Mark Table";
 studentsMarkTable.setAttribute(
   "class",
-  "flex items-center px-3 py-2 rounded-lg hover:bg-gray-200 text-gray-700"
+  "px-3 py-2 rounded-lg hover:bg-gray-800 transition text-gray-300"
 );
 studentsMarkTable.href = "./MarksTable.html";
 
 // ---------------- Active Logic ----------------
 const currentPath = window.location.pathname;
-
-// group related pages
 const studentDetailPages = ["students.html", "studentForm.html"];
 const studentMarkPages = ["MarksTable.html", "studentMarks.html"];
 
-// check active link
 if (studentDetailPages.some((page) => currentPath.endsWith(page))) {
-  studentsTable.classList.add("bg-gray-200", "font-bold", "text-blue-600");
+  studentsTable.classList.add(
+    "border-l-4",
+    "border-blue-500",
+    "bg-gray-800",
+    "text-white"
+  );
 } else if (studentMarkPages.some((page) => currentPath.endsWith(page))) {
-  studentsMarkTable.classList.add("bg-gray-200", "font-bold", "text-blue-600");
+  studentsMarkTable.classList.add(
+    "border-l-4",
+    "border-blue-500",
+    "bg-gray-800",
+    "text-white"
+  );
 }
 
 navigationContainer.append(studentsTable, studentsMarkTable);
 sideBarContainer.append(titleSidebar, navigationContainer);
 
-/* =============================================*/
-// === MAIN LAYOUT ===
+/* ---------------- Layout ---------------- */
 const layoutContainer = document.createElement("div");
 layoutContainer.setAttribute("class", "flex w-full h-screen");
 
@@ -85,7 +97,7 @@ layoutContainer.appendChild(sideBarContainer);
 
 // Main content wrapper
 const mainContent = document.createElement("div");
-mainContent.setAttribute("class", "flex-1 p-6 overflow-y-auto");
+mainContent.setAttribute("class", "flex-1 p-8 overflow-y-auto bg-gray-50");
 mainContent.appendChild(container);
 
 // Add both to layout
@@ -94,18 +106,24 @@ document.body.appendChild(layoutContainer);
 
 /* ---------------- Search Bar ---------------- */
 const searchDiv = document.createElement("div");
-searchDiv.setAttribute("class", "flex items-center gap-3 mb-5");
+searchDiv.setAttribute(
+  "class",
+  "flex items-center gap-3 mb-6 bg-white p-4 rounded-lg shadow"
+);
 
 const searchInput = document.createElement("input");
 searchInput.setAttribute("type", "text");
 searchInput.setAttribute(
   "class",
-  "border px-3 py-2 rounded w-1/3 outline-none"
+  "border px-4 py-2 rounded-lg w-1/3 outline-none focus:ring-2 focus:ring-blue-500"
 );
 searchInput.setAttribute("placeholder", "Search...");
 
 const searchSelect = document.createElement("select");
-searchSelect.setAttribute("class", "border px-2 py-2 rounded");
+searchSelect.setAttribute(
+  "class",
+  "border px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500"
+);
 ["Name", "Roll No", "Group"].forEach((optionText) => {
   const option = document.createElement("option");
   option.value = optionText.toLowerCase().replace(" ", "");
@@ -116,35 +134,38 @@ searchSelect.setAttribute("class", "border px-2 py-2 rounded");
 searchDiv.append(searchInput, searchSelect);
 container.appendChild(searchDiv);
 
-// PDF and EXCEL file export section
-
+/* ---------------- Export Section ---------------- */
 const exportDiv = document.createElement("div");
-exportDiv.setAttribute("class", "flex gap-4 mb-5");
+exportDiv.setAttribute(
+  "class",
+  "flex gap-4 mb-6 bg-white p-4 rounded-lg shadow"
+);
 
 const exportPdfBtn = document.createElement("button");
-exportPdfBtn.textContent = "Export as Pdf";
+exportPdfBtn.innerHTML = `<i class="fa-solid fa-file-pdf"></i> Export as PDF`;
 exportPdfBtn.className =
-  "bg-red-600 font-bold text-white px-4 py-2 rounded hover:bg-red-700";
+  "flex items-center gap-2 bg-red-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-red-700 transition";
 
 const exportExcelBtn = document.createElement("button");
-exportExcelBtn.textContent = "Export as Excel";
+exportExcelBtn.innerHTML = `<i class="fa-solid fa-file-excel"></i> Export as Excel`;
 exportExcelBtn.className =
-  "bg-green-600 font-bold text-white px-4 py-2 rounded hover:bg-green-700";
+  "flex items-center gap-2 bg-green-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-green-700 transition";
 
 exportDiv.append(exportPdfBtn, exportExcelBtn);
-
 container.appendChild(exportDiv);
 
-/*---------------------------------------------*/
-// Table
+/* ---------------- Table ---------------- */
 const table = document.createElement("table");
-table.setAttribute("class", "min-w-full shadow-md rounded-lg overflow-hidden");
+table.setAttribute(
+  "class",
+  "min-w-full border-collapse bg-white shadow-lg rounded-lg overflow-hidden"
+);
 
 // Table Head
 const thead = document.createElement("thead");
-thead.setAttribute("class", "bg-gray-700");
+thead.setAttribute("class", "bg-blue-600");
 const headerRow = document.createElement("tr");
-
+headerRow.className = "text-white text-left text-sm uppercase";
 let currentSort = { key: null, asc: true };
 
 function sortStudents(key) {
@@ -179,7 +200,7 @@ function sortStudents(key) {
   th.textContent = text;
   th.setAttribute(
     "class",
-    "px-4 py-2 text-left font-medium text-white cursor-pointer"
+    "px-4 py-3 text-left font-medium text-white cursor-pointer select-none"
   );
 
   if (text !== "Actions") {
@@ -205,28 +226,24 @@ function loadStudents(filteredStudents = null) {
   const students = JSON.parse(localStorage.getItem("students")) || [];
   const displayList = filteredStudents || students;
 
-  // Clear previous noData message if exists
   const existingNoData = container.querySelector(".no-data-message");
   if (existingNoData) existingNoData.remove();
 
-  // Show search bar always
   searchDiv.style.display = "flex";
   exportDiv.style.display = "flex";
+
   if (displayList.length === 0) {
-    // Hide table
     table.style.display = "none";
     exportDiv.style.display = "none";
-    // Show no data message
+
     const noData = document.createElement("h1");
     noData.textContent = "- - No students Data available - -";
     noData.setAttribute(
       "class",
-      "text-center text-yellow-300 mt-10 text-xl no-data-message"
+      "text-center text-yellow-600 mt-10 text-xl no-data-message"
     );
-
     container.appendChild(noData);
   } else {
-    // Show table and head
     table.style.display = "table";
     thead.style.display = "table-header-group";
     tbody.innerHTML = "";
@@ -237,14 +254,15 @@ function loadStudents(filteredStudents = null) {
       );
 
       const row = document.createElement("tr");
-      row.className = "bg-gray-400";
+      row.className =
+        "odd:bg-gray-50 even:bg-gray-100 hover:bg-blue-50 transition";
 
       const createTd = (text) => {
         const td = document.createElement("td");
         td.textContent = text;
         td.setAttribute(
           "class",
-          "border px-4 py-2 text-gray-700 text-md font-bold"
+          "border px-4 py-2 text-gray-700 text-sm font-medium"
         );
         return td;
       };
@@ -260,40 +278,40 @@ function loadStudents(filteredStudents = null) {
       );
 
       const actionsTd = document.createElement("td");
-      actionsTd.setAttribute("class", "border px-2 py-4 space-y-3");
+      actionsTd.setAttribute("class", "border px-2 py-4");
 
       const editBtn = document.createElement("button");
-      editBtn.textContent = "Edit";
+      editBtn.innerHTML = `<i class="fa-solid fa-pen"></i> Edit`;
       editBtn.className =
-        "bg-yellow-500 text-white px-4 py-1 rounded hover:bg-yellow-600";
+        "flex items-center gap-1 bg-yellow-500 text-white px-3 py-1 rounded-md shadow hover:bg-yellow-600 transition";
       editBtn.addEventListener("click", () => editStudent(actualIndex));
 
       const deleteBtn = document.createElement("button");
-      deleteBtn.textContent = "Delete";
+      deleteBtn.innerHTML = `<i class="fa-solid fa-trash"></i> Delete`;
       deleteBtn.className =
-        "bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600";
+        "flex items-center gap-1 bg-red-500 text-white px-3 py-1 rounded-md shadow hover:bg-red-600 transition";
       deleteBtn.addEventListener("click", () => deleteStudent(actualIndex));
 
       const pdfBtn = document.createElement("button");
-      pdfBtn.textContent = "Pdf";
+      pdfBtn.innerHTML = `<i class="fa-solid fa-file-pdf"></i> Pdf`;
       pdfBtn.className =
-        "bg-blue-500 text-white px-5 py-1 rounded hover:bg-blue-700";
+        "flex items-center gap-1 bg-blue-500 text-white px-3 py-1 rounded-md shadow hover:bg-blue-600 transition";
       pdfBtn.addEventListener("click", function () {
         exportStudentPDF(student);
       });
 
       const excelBtn = document.createElement("button");
-      excelBtn.textContent = "Excel";
+      excelBtn.innerHTML = `<i class="fa-solid fa-file-excel"></i> Excel`;
       excelBtn.className =
-        "bg-green-500 text-white px-4 py-1 rounded hover:bg-green-700";
+        "flex items-center gap-1 bg-green-500 text-white px-3 py-1 rounded-md shadow hover:bg-green-600 transition";
       excelBtn.addEventListener("click", function () {
         exportStudentExcel(student);
       });
 
       const btnGroup = document.createElement("div");
       btnGroup.setAttribute("class", "flex justify-center gap-2 flex-wrap");
-
       btnGroup.append(editBtn, deleteBtn, pdfBtn, excelBtn);
+
       actionsTd.appendChild(btnGroup);
       row.appendChild(actionsTd);
       tbody.appendChild(row);
@@ -306,18 +324,18 @@ function deleteStudent(index) {
   const overlay = document.createElement("div");
   overlay.setAttribute(
     "class",
-    "fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start z-50"
+    "fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
   );
 
   const modal = document.createElement("div");
   modal.setAttribute(
     "class",
-    "bg-white rounded-xl shadow-lg p-6 w-96 text-center"
+    "bg-white rounded-xl shadow-2xl p-6 w-96 text-center animate-fadeIn"
   );
 
   const title = document.createElement("h2");
   title.textContent = "Are you sure?";
-  title.setAttribute("class", "text-xl font-bold text-gray-800 mb-4");
+  title.setAttribute("class", "text-xl font-bold text-gray-900 mb-4");
 
   const message = document.createElement("p");
   message.textContent =
@@ -331,7 +349,7 @@ function deleteStudent(index) {
   cancelBtn.textContent = "Cancel";
   cancelBtn.setAttribute(
     "class",
-    "bg-gray-400 text-white px-5 py-2 rounded hover:bg-gray-500"
+    "bg-gray-200 text-gray-700 px-5 py-2 rounded-lg hover:bg-gray-300 transition"
   );
   cancelBtn.addEventListener("click", () => {
     document.body.removeChild(overlay);
@@ -341,7 +359,7 @@ function deleteStudent(index) {
   confirmBtn.textContent = "Delete";
   confirmBtn.setAttribute(
     "class",
-    "bg-red-500 text-white px-5 py-2 rounded hover:bg-red-600"
+    "bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700 transition"
   );
   confirmBtn.addEventListener("click", () => {
     let students = JSON.parse(localStorage.getItem("students")) || [];
@@ -387,8 +405,8 @@ function searchStudents() {
 searchInput.addEventListener("input", searchStudents);
 searchSelect.addEventListener("change", searchStudents);
 
-// Load students on page load
 window.onload = () => loadStudents();
+
 
 /* ---------------- Safe Download ---------------- */
 function triggerDownload(blob, fileName) {

@@ -1,4 +1,4 @@
-document.body.setAttribute("class", "bg-gray-600");
+document.body.setAttribute("class", "bg-gray-100 font-sans");
 
 // Container
 const container = document.createElement("div");
@@ -8,39 +8,26 @@ container.setAttribute("class", "max-w-7xl mx-auto");
 const sideBarContainer = document.createElement("div");
 sideBarContainer.setAttribute(
   "class",
-  "w-64 bg-white shadow-lg p-5 flex flex-col"
+  "w-64 bg-gray-900 text-white shadow-lg p-6 flex flex-col"
 );
 
 const titleSidebar = document.createElement("h1");
-titleSidebar.textContent = "Students Mark list Management";
-titleSidebar.setAttribute("class", "text-2xl font-bold text-gray-800 mb-6");
+titleSidebar.textContent = "Students Mark List Management";
+titleSidebar.setAttribute(
+  "class",
+  "text-lg font-semibold mb-6 tracking-wide border-b border-gray-700 pb-3"
+);
 
 // navigation container
 const navigationContainer = document.createElement("nav");
-navigationContainer.setAttribute("class", "flex flex-col space-y-4");
-// PDF and EXCEL file export section
-
-const exportDiv = document.createElement("div");
-exportDiv.setAttribute("class", "flex gap-4 mb-5");
-
-const exportPdfBtn = document.createElement("button");
-exportPdfBtn.textContent = "Export as Pdf";
-exportPdfBtn.className =
-  "bg-red-600 font-bold text-white px-4 py-2 rounded hover:bg-red-700";
-
-const exportExcelBtn = document.createElement("button");
-exportExcelBtn.textContent = "Export as Excel";
-exportExcelBtn.className =
-  "bg-green-600 font-bold text-white px-4 py-2 rounded hover:bg-green-700";
-
-exportDiv.append(exportPdfBtn, exportExcelBtn);
+navigationContainer.setAttribute("class", "flex flex-col space-y-3");
 
 // students table
 const studentsTable = document.createElement("a");
-studentsTable.textContent = "Students detail Table";
+studentsTable.textContent = "Students Detail Table";
 studentsTable.setAttribute(
   "class",
-  "flex items-center px-3 py-2 rounded-lg hover:bg-gray-200 text-gray-700"
+  "px-3 py-2 rounded-lg hover:bg-gray-800 transition text-gray-300"
 );
 studentsTable.href = "./students.html";
 
@@ -49,149 +36,183 @@ const studentsMarkTable = document.createElement("a");
 studentsMarkTable.textContent = "Students Mark Table";
 studentsMarkTable.setAttribute(
   "class",
-  "flex items-center px-3 py-2 rounded-lg hover:bg-gray-200 text-gray-700"
+  "px-3 py-2 rounded-lg hover:bg-gray-800 transition text-gray-300"
 );
 studentsMarkTable.href = "./MarksTable.html";
 
 // ---------------- Active Logic ----------------
 const currentPath = window.location.pathname;
-console.log("Current path:", currentPath);
-
-// group related pages
 const studentDetailPages = ["students.html", "studentForm.html"];
 const studentMarkPages = ["MarksTable.html", "studentMarks.html"];
 
-// check active link
 if (studentDetailPages.some((page) => currentPath.endsWith(page))) {
-  studentsTable.classList.add("bg-gray-200", "font-bold", "text-blue-600");
+  studentsTable.classList.add(
+    "border-l-4",
+    "border-blue-500",
+    "bg-gray-800",
+    "text-white"
+  );
 } else if (studentMarkPages.some((page) => currentPath.endsWith(page))) {
-  studentsMarkTable.classList.add("bg-gray-200", "font-bold", "text-blue-600");
+  studentsMarkTable.classList.add(
+    "border-l-4",
+    "border-blue-500",
+    "bg-gray-800",
+    "text-white"
+  );
 }
 
 navigationContainer.append(studentsTable, studentsMarkTable);
 sideBarContainer.append(titleSidebar, navigationContainer);
-/* =============================================*/
 
 // === MAIN LAYOUT ===
 const layoutContainer = document.createElement("div");
 layoutContainer.setAttribute("class", "flex w-full h-screen");
 
-// Sidebar (already built above)
+// Sidebar
 layoutContainer.appendChild(sideBarContainer);
 
+// Main content wrapper
 const mainContent = document.createElement("div");
-mainContent.setAttribute("class", "flex-1 p-6 pt-20 overflow-y-auto");
+mainContent.setAttribute("class", "flex-1 p-8 overflow-y-auto bg-gray-50");
 mainContent.appendChild(container);
+
 // Add both to layout
 layoutContainer.appendChild(mainContent);
 document.body.appendChild(layoutContainer);
-/*=============================================*/
-// Title & Add Button
+
+// ---------------- HEADER ----------------
 const headerDiv = document.createElement("div");
-headerDiv.setAttribute("class", "flex justify-between items-center mb-5");
+headerDiv.setAttribute("class", "flex justify-between items-center mb-8");
 
 const title = document.createElement("h1");
-title.textContent = "Students Mark Details";
-title.setAttribute("class", "text-2xl text-white font-bold");
+title.textContent = "📑 Students Mark Details";
+title.setAttribute("class", "text-3xl font-extrabold text-gray-800");
 headerDiv.appendChild(title);
 
 const addBtn = document.createElement("button");
-addBtn.textContent = "Add Student Marks";
+addBtn.textContent = "+ Add Student Marks";
 addBtn.setAttribute(
   "class",
-  "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+  "bg-blue-600 text-white px-5 py-2 rounded-full shadow hover:bg-blue-700 transition font-semibold"
 );
-
 addBtn.addEventListener("click", () => {
   window.location.href = "./studentMarksform.html";
 });
 
 headerDiv.appendChild(addBtn);
 container.appendChild(headerDiv);
+
+// ---------------- EXPORT SECTION ----------------
+const exportDiv = document.createElement("div");
+exportDiv.setAttribute(
+  "class",
+  "flex gap-4 mb-6 bg-white p-4 rounded-xl shadow-md border"
+);
+
+const exportPdfBtn = document.createElement("button");
+exportPdfBtn.textContent = "📄 Export as PDF";
+exportPdfBtn.className =
+  "flex items-center gap-2 bg-red-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-red-700 transition";
+
+const exportExcelBtn = document.createElement("button");
+exportExcelBtn.textContent = "📊 Export as Excel";
+exportExcelBtn.className =
+  "flex items-center gap-2 bg-green-600 text-white font-semibold px-5 py-2 rounded-lg hover:bg-green-700 transition";
+
+exportDiv.append(exportPdfBtn, exportExcelBtn);
 container.appendChild(exportDiv);
-// Load students
+
+// ---------------- STUDENTS DATA ----------------
 const students = JSON.parse(localStorage.getItem("students")) || [];
 
-// If no students
 if (students.length === 0) {
   exportDiv.style.display = "none";
   const noData = document.createElement("h1");
   noData.textContent = "- - Add new students to add Marks - -";
-  noData.setAttribute("class", "text-center text-yellow-300 mt-10 text-xl");
+  noData.setAttribute(
+    "class",
+    "text-center text-yellow-500 mt-10 text-xl font-semibold"
+  );
   container.appendChild(noData);
 } else if (!students.some((student) => student.marks)) {
   const noMarks = document.createElement("h1");
-  noMarks.textContent = "No marks data available.";
-  noMarks.setAttribute("class", "text-center text-red-400 mt-10 text-xl");
+  noMarks.textContent = "⚠ No marks data available.";
+  exportDiv.style.display = "none"
+  noMarks.setAttribute(
+    "class",
+    "text-center text-red-500 mt-10 text-xl font-semibold"
+  );
   container.appendChild(noMarks);
 } else {
-  // Collect all unique subjects from students
+  // Collect all unique subjects
   const allSubjects = new Set();
   students.forEach((student) => {
     if (student.marks) {
       Object.keys(student.marks).forEach((sub) => allSubjects.add(sub));
     }
   });
-
   const subjectsArray = Array.from(allSubjects);
 
   // Table
   const table = document.createElement("table");
   table.setAttribute(
     "class",
-    "min-w-full border border-white bg-gray-600 shadow-md rounded-lg overflow-hidden text-lg"
+    "min-w-full border-collapse bg-white shadow-lg rounded-xl overflow-hidden"
   );
 
   // Thead
   const thead = document.createElement("thead");
   const headTr = document.createElement("tr");
-  headTr.setAttribute("class", "bg-gray-700 text-white");
+  headTr.setAttribute(
+    "class",
+    "bg-blue-600 text-white text-sm uppercase tracking-wide"
+  );
 
   const thName = document.createElement("th");
-  thName.setAttribute("class", "py-2 px-4 border");
+  thName.setAttribute("class", "py-3 px-4 text-left");
   thName.textContent = "Name";
   headTr.appendChild(thName);
 
   const thRoll = document.createElement("th");
-  thRoll.setAttribute("class", "py-2 px-4 border");
+  thRoll.setAttribute("class", "py-3 px-4 text-left");
   thRoll.textContent = "Roll No";
   headTr.appendChild(thRoll);
 
   subjectsArray.forEach((sub) => {
     const th = document.createElement("th");
-    th.setAttribute("class", "py-2 px-4 border");
+    th.setAttribute("class", "py-3 px-4 text-center");
     th.textContent = sub;
     headTr.appendChild(th);
   });
 
-  thead.appendChild(headTr);
-
   const thAction = document.createElement("th");
-  thAction.setAttribute("class", "py-2 px-4 border");
+  thAction.setAttribute("class", "py-3 px-4 text-center");
   thAction.textContent = "Actions";
   headTr.appendChild(thAction);
+
+  thead.appendChild(headTr);
   table.appendChild(thead);
 
   // Tbody
   const tbody = document.createElement("tbody");
-  students.forEach((student) => {
+  students.forEach((student, idx) => {
     if (student.marks) {
       const tr = document.createElement("tr");
-      tr.setAttribute("class", "text-black bg-gray-400");
+      tr.setAttribute("class", idx % 2 === 0 ? "bg-gray-50" : "bg-gray-100");
 
       const tdName = document.createElement("td");
-      tdName.setAttribute("class", "py-2 px-4 border");
+      tdName.setAttribute("class", "py-2 px-4 font-medium text-gray-800");
       tdName.textContent = student.name;
       tr.appendChild(tdName);
 
       const tdRoll = document.createElement("td");
-      tdRoll.setAttribute("class", "py-2 px-4 border");
+      tdRoll.setAttribute("class", "py-2 px-4 text-gray-700");
       tdRoll.textContent = student.rollno;
       tr.appendChild(tdRoll);
 
       subjectsArray.forEach((sub) => {
         const td = document.createElement("td");
-        td.setAttribute("class", "py-2 px-4 border text-center");
+        td.setAttribute("class", "py-2 px-4 text-center text-gray-600");
         td.textContent =
           student.marks && student.marks[sub] !== undefined
             ? student.marks[sub]
@@ -200,13 +221,15 @@ if (students.length === 0) {
       });
 
       const actionsTd = document.createElement("td");
-      actionsTd.setAttribute("class", "py-2 px-4 border text-center");
+      actionsTd.setAttribute("class", "py-2 px-4 text-center");
 
-      // actions section
+      const btnGroup = document.createElement("div");
+      btnGroup.setAttribute("class", "flex justify-center gap-2");
+
       const pdfBtn = document.createElement("button");
-      pdfBtn.textContent = "Pdf";
+      pdfBtn.textContent = "PDF";
       pdfBtn.className =
-        "bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700 ";
+        "bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 text-sm font-semibold";
       pdfBtn.addEventListener("click", function () {
         exportStudentPDF(student);
       });
@@ -214,12 +237,10 @@ if (students.length === 0) {
       const excelBtn = document.createElement("button");
       excelBtn.textContent = "Excel";
       excelBtn.className =
-        "bg-green-500 text-white px-3 py-1 rounded hover:bg-green-700 ";
+        "bg-green-500 text-white px-3 py-1 rounded-lg hover:bg-green-600 text-sm font-semibold";
       excelBtn.addEventListener("click", function () {
         exportStudentExcel(student);
       });
-      const btnGroup = document.createElement("div");
-      btnGroup.setAttribute("class", "flex justify-center gap-2");
 
       btnGroup.append(pdfBtn, excelBtn);
       actionsTd.appendChild(btnGroup);
@@ -231,7 +252,6 @@ if (students.length === 0) {
   table.appendChild(tbody);
   container.appendChild(table);
 }
-
 /* ---------------- Safe Download ---------------- */
 function triggerDownload(blob, fileName) {
   const url = URL.createObjectURL(blob);
